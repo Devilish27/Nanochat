@@ -29,6 +29,14 @@ in one command.
   use appear in the same picker, in their own group. Use either key or both, and even switch
   between providers inside one chat. Favorites, the filter box and saved chats work for both.
 - **Favorite models.** Click the star next to the model picker. Favorites are listed first.
+- **Formatted replies.** Markdown is rendered as the reply streams in: headings, bold, italics,
+  strikethrough, nested lists, task lists, tables (they scroll sideways when wide), blockquotes,
+  rules, links and code blocks with a Copy button. Your own messages are always shown exactly as
+  you typed them. Math (LaTeX) and footnotes are not rendered.
+- **Safe by design.** Replies are untrusted text. Raw HTML or scripts in a reply are shown as text
+  and never run, links open in a new tab and only `http`, `https` and `mailto` links are
+  clickable, and images are never loaded (a remote image would let a reply track you), so they
+  appear as plain links instead.
 - **Themes.** Pick a look in **Settings**: Auto (follows your system light/dark setting), Light,
   Paper, Sky, Rose, Dark, Midnight, Nord, Forest, Violet, Terminal or High contrast. The choice
   is saved and applied from the very first paint, so there is no flash at startup.
@@ -137,6 +145,17 @@ Reasoning tokens are billed as output tokens, so higher effort costs more and is
 Gemini chats send only the visible text of earlier turns back to the model (not Google's
 encrypted thought signatures), which is all plain text chat needs.
 This project is not affiliated with OpenRouter or Google.
+
+## Changelog
+
+**1.1**
+- Replies are now rendered as Markdown instead of showing raw `#`, `*` and `|` characters.
+  Rendering is done by a small built-in renderer (no libraries, still fully offline).
+- Fix: code blocks no longer have a stray gap around the code.
+
+**1.0** First release.
+
+
 
 ## License
 
