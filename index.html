@@ -61,7 +61,7 @@ main{flex:1;min-width:0;display:flex;flex-direction:column}
 .cbw{margin:8px 0;border:1px solid var(--line);border-radius:6px;overflow:hidden}
 .cbh{display:flex;justify-content:space-between;align-items:center;padding:3px 8px;background:var(--sel);color:var(--mute);font-size:12px;border-bottom:1px solid var(--line)}
 .cbh button{padding:2px 8px;font-size:12px;margin-left:6px}
-.cbw pre{margin:0;border-radius:0}
+.m .cbw pre{margin:0;border-radius:0}
 .wrap{max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
 .m{padding:10px 14px;border-radius:10px;white-space:pre-wrap;overflow-wrap:anywhere}
 .m.user{background:var(--user);align-self:flex-end;max-width:90%}
@@ -69,6 +69,22 @@ main{flex:1;min-width:0;display:flex;flex-direction:column}
 .m pre{background:var(--code);border-radius:6px;padding:10px;margin:8px 0;overflow-x:auto;white-space:pre}
 .m code{font:13px/1.45 ui-monospace,Consolas,monospace;background:var(--code);padding:1px 5px;border-radius:4px}
 .m pre code{background:none;padding:0}
+.m.assistant .body{white-space:normal}
+.body>:first-child{margin-top:0}.body>:last-child{margin-bottom:0}
+.body p{margin:0 0 10px}
+.body h1,.body h2,.body h3,.body h4,.body h5,.body h6{margin:16px 0 6px;line-height:1.3}
+.body h1{font-size:1.35em}.body h2{font-size:1.2em}.body h3{font-size:1.08em}.body h4,.body h5,.body h6{font-size:1em}
+.body ul,.body ol{margin:0 0 10px;padding-left:1.6em}
+.body li{margin:3px 0}.body li>ul,.body li>ol{margin:3px 0 0}.body li>p{margin:0 0 6px}
+.body li.task{list-style:none;margin-left:-1.4em}.body .ck{margin-right:4px;color:var(--mute)}.body .ck.on{color:var(--accent)}
+.body blockquote{margin:0 0 10px;padding:2px 12px;border-left:3px solid var(--line);color:var(--mute)}
+.body hr{border:0;border-top:1px solid var(--line);margin:14px 0}
+.body a{color:var(--accent)}
+.body del{opacity:.65}
+.tw{overflow-x:auto;margin:0 0 10px}
+.body table{border-collapse:collapse;font-size:14px;overflow-wrap:normal}
+.body th,.body td{border:1px solid var(--line);padding:5px 10px;text-align:left;vertical-align:top;min-width:6em}
+.body th{background:var(--sel);font-weight:600}
 .empty{color:var(--mute);text-align:center;margin-top:12vh}
 footer{padding:10px 14px 14px}
 footer .wrap{flex-direction:row;align-items:flex-end;gap:8px}
@@ -143,21 +159,156 @@ function buildThemes() {
   });
 }
 
-/* ---------- formatting ---------- */
-const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-const inline = s => esc(s).replace(/`([^`\n]+)`/g,'<code>$1</code>').replace(/\*\*([^*\n]+)\*\*/g,'<b>$1</b>');
-const fmt = t => {
-  const parts = t.split('```');
-  return parts.map((p, i) => {
-    if (i % 2 === 0) return inline(p);
-    const nl = p.indexOf('\n'), lang = nl < 0 ? '' : p.slice(0, nl).trim(), code = (nl < 0 ? p : p.slice(nl + 1)).replace(/\n$/, '');
-    const pre = '<pre><code>' + esc(code) + '</code></pre>';
-    if (i === parts.length - 1) return pre; // fence still open: block is being written
-    const html = /^html?$/i.test(lang) || /^\s*<(!doctype html|html)/i.test(code);
-    return '<div class="cbw"><div class="cbh"><span>' + esc(lang || 'code') + '</span><span><button data-act="copy">Copy</button>' +
-      (html ? '<button data-act="dl">Download .html</button>' : '') + '</span></div>' + pre + '</div>';
-  }).join('');
-};
+/* ---------- markdown ---------- */
+/* A small Markdown renderer (CommonMark/GFM subset): headings, paragraphs, lists (nested, task), blockquotes, tables,
+   fenced code, rules, links, bold/italic/strike, inline code. Everything is escaped first and only our own tags are
+   emitted; links are limited to http(s)/mailto and images are never loaded (shown as links). Output has no whitespace
+   between tags because bubbles use pre-wrap. Called on every streamed chunk, so half-written input must render sanely. */
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const LI = /^( *)(?:([-*+])|(\d{1,9})[.)])[ \t]+(?=\S)/, FENCE = /^ {0,3}(`{3,}|~{3,})[ \t]*([^\s`]*)[^`]*$/,
+  HEAD = /^ {0,3}(#{1,6})[ \t]+(.*?)(?:[ \t]+#+)?[ \t]*$/, HR = /^ {0,3}([-*_])(?:[ \t]*\1){2,}[ \t]*$/, QUOTE = /^ {0,3}>[ ]?/,
+  TDEL = /^ {0,3}\|?[ \t]*:?-+:?[ \t]*(?:\|[ \t]*:?-+:?[ \t]*)*\|?[ \t]*$/;
+
+// Wrap only when the text between the markers has properly nested inline tags; overlapping spans such as *a **b* c** stay literal.
+const nested = c => { const st = []; for (const m of c.matchAll(/<(\/?)(strong|em|del)>/g)) if (!m[1]) st.push(m[2]); else if (st.pop() !== m[2]) return false; return !st.length; };
+const wrap = (s, re, open, close, pre) => s.replace(re, (m, a, b) => { const body = pre ? b : a; return nested(body) ? (pre ? a : '') + open + body + close : m; });
+function emph(s) {
+  s = wrap(s, /\*\*\*(?=[^\s*])([\s\S]*?[^\s*])\*\*\*/g, '<strong><em>', '</em></strong>');
+  s = wrap(s, /\*\*(?=\S)([\s\S]*?\S)\*\*/g, '<strong>', '</strong>');
+  s = wrap(s, /(^|[^\w])__(?=\S)([\s\S]*?\S)__(?!\w)/g, '<strong>', '</strong>', true);
+  s = wrap(s, /\*(?=[^\s*])([^*]*?[^\s*])\*/g, '<em>', '</em>');
+  s = wrap(s, /(^|[^\w])_(?=[^\s_])([^_]*?[^\s_])_(?!\w)/g, '<em>', '</em>', true);
+  return wrap(s, /~~(?=\S)([\s\S]*?\S)~~/g, '<del>', '</del>');
+}
+function inline(src) {
+  const st = [], lit = new Set(), an = {}; // st: stashed HTML; lit: stashed plain escaped chars; an: anchor label by placeholder
+  const put = (h, plain) => { st.push(h); if (plain) lit.add(st.length - 1); return '\u0000' + (st.length - 1) + '\u0000'; };
+  const link = (url, label) => {
+    url = url.replace(/\u0000(\d+)\u0000/g, (m, i) => lit.has(+i) ? st[i] : m); // an escaped char (\_) is fine in a URL; any other placeholder is not
+    if (!/^(https?:\/\/|mailto:)[^\s<>"\u0000]*$/i.test(url)) return label;
+    const t = put('<a href="' + url + '" target="_blank" rel="noopener noreferrer">' + label + '</a>');
+    an[st.length - 1] = label;
+    return t;
+  };
+  let s = src.replace(/\u0000/g, '');
+  s = s.replace(/(`+)(?!`)([\s\S]*?[^`])\1(?!`)/g, (_, __, c) => {
+    c = c.replace(/\n/g, ' ');
+    if (/^ .* $/.test(c) && c.trim()) c = c.slice(1, -1);
+    return put('<code>' + esc(c) + '</code>');
+  });
+  s = s.replace(/\\([\\`*_{}\[\]()#+\-.!|~<>])/g, (_, c) => put(esc(c), true));
+  s = esc(s);
+  s = s.replace(/&lt;br\s*\/?&gt;/gi, () => put('<br>'));
+  s = s.replace(/&lt;((?:https?:\/\/|mailto:)[^\s]*?)&gt;/gi, (_, u) => link(u, u));
+  s = s.replace(/(!?)\[((?:[^\[\]\n]|\[[^\[\]\n]*\])+)\]\((&lt;[^\s]*?&gt;|[^\s()]+(?:\([^\s()]*\)[^\s()]*)*)(?:\s+&quot;.*?&quot;)?\s*\)/g,
+    (_, img, label, url) => link(url.replace(/^&lt;|&gt;$/g, ''), emph(label.replace(/\u0000(\d+)\u0000/g, (m, i) => i in an ? an[i] : m)))); // no links inside link text
+  s = s.replace(/\bhttps?:\/\/[^\s\u0000]+/gi, m => {
+    let u = m, tail = '', t;
+    while ((t = u.match(/(&quot;|&gt;|&lt;|[.,;:!?*_~'\]]|\))$/))) {
+      if (t[1] === ')' && (u.match(/\(/g) || []).length >= (u.match(/\)/g) || []).length) break;
+      tail = t[1] + tail; u = u.slice(0, -t[1].length);
+    }
+    return link(u, u) + tail;
+  });
+  s = emph(s);
+  for (let n = 0; n < 4 && s.includes('\u0000'); n++) s = s.replace(/\u0000(\d+)\u0000/g, (_, i) => st[i]);
+  return s.replace(/\n/g, '<br>');
+}
+
+const norm = l => l.replace(/^[ \t]+/, w => w.replace(/\t/g, '    '));
+const indentOf = l => l.match(/^ */)[0].length, isBlank = l => !l.trim();
+const cells = l => { let s = l.trim(); if (s[0] === '|') s = s.slice(1); if (/(?<!\\)\|$/.test(s)) s = s.slice(0, -1); return s.split(/(?<!\\)\|/).map(c => c.trim()); };
+const isTable = (l, nx) => nx != null && l.includes('|') && nx.includes('|') && TDEL.test(nx) && cells(l).length === cells(nx).length;
+const startsBlock = (l, nx) => FENCE.test(l) || HEAD.test(l) || HR.test(l) || QUOTE.test(l) || /^ *(?:[-*+]|1[.)])[ \t]+\S/.test(l) || isTable(l, nx); // lists interrupt a paragraph (ordered only when starting at 1)
+function codeBlock(lang, code, closed) {
+  const pre = '<pre><code>' + esc(code) + '</code></pre>';
+  if (!closed) return pre; // fence still open: block is being written
+  const html = /^html?$/i.test(lang) || /^\s*<(!doctype html|html)/i.test(code);
+  return '<div class="cbw"><div class="cbh"><span>' + esc(lang || 'code') + '</span><span><button data-act="copy">Copy</button>' +
+    (html ? '<button data-act="dl">Download .html</button>' : '') + '</span></div>' + pre + '</div>';
+}
+function blocks(L, tight, d) {
+  if (d > 8) return [inline(L.join('\n'))]; // absurdly deep nesting: show as text
+  const out = [];
+  let i = 0, m;
+  while (i < L.length) {
+    const raw = L[i], l = norm(raw), nx = i + 1 < L.length ? norm(L[i + 1]) : null;
+    if (isBlank(l)) { i++; continue; }
+    if ((m = l.match(FENCE))) { // fenced code
+      const ch = m[1][0], len = m[1].length, lead = indentOf(l), code = [];
+      let closed = false;
+      for (i++; i < L.length; i++) {
+        const c = L[i].match(/^ {0,3}(`{3,}|~{3,})[ \t]*$/);
+        if (c && c[1][0] === ch && c[1].length >= len) { closed = true; i++; break; }
+        code.push(L[i].replace(new RegExp('^ {0,' + lead + '}'), ''));
+      }
+      out.push(codeBlock(m[2], code.join('\n'), closed));
+      continue;
+    }
+    if ((m = l.match(HEAD))) { out.push('<h' + m[1].length + '>' + inline(m[2]) + '</h' + m[1].length + '>'); i++; continue; }
+    if (HR.test(l)) { out.push('<hr>'); i++; continue; }
+    if (QUOTE.test(l)) {
+      const q = [];
+      for (; i < L.length && QUOTE.test(norm(L[i])); i++) q.push(norm(L[i]).replace(QUOTE, ''));
+      out.push('<blockquote>' + blocks(q, false, d + 1).join('') + '</blockquote>');
+      continue;
+    }
+    if (isTable(l, nx)) {
+      const head = cells(l), al = cells(nx).map(c => c.slice(-1) === ':' ? (c[0] === ':' ? 'center' : 'right') : '');
+      const cell = (tag, c, k) => '<' + tag + (al[k] ? ' style="text-align:' + al[k] + '"' : '') + '>' + inline(c || '') + '</' + tag + '>';
+      const rows = [];
+      for (i += 2; i < L.length && !isBlank(L[i]) && L[i].includes('|'); i++) {
+        const r = cells(L[i]);
+        rows.push('<tr>' + head.map((_, k) => cell('td', r[k], k)).join('') + '</tr>');
+      }
+      out.push('<div class="tw"><table><thead><tr>' + head.map((c, k) => cell('th', c, k)).join('') + '</tr></thead><tbody>' + rows.join('') + '</tbody></table></div>');
+      continue;
+    }
+    if ((m = l.match(LI))) { // list: items own their indented lines, rendered recursively
+      const ordered = m[3] !== undefined, base = m[1].length, items = [];
+      let loose = false;
+      while (i < L.length) {
+        const cur = norm(L[i]), cm = cur.match(LI);
+        if (!cm || cm[1].length >= base + 2 || (cm[3] !== undefined) !== ordered) break;
+        const mk = cm[0].replace(/[ \t]+$/, ''), cIndent = mk.length + Math.min(cm[0].length - mk.length, 4);
+        const sub = [cur.slice(cm[0].length)];
+        let k = i + 1;
+        while (k < L.length) {
+          const ln = norm(L[k]);
+          if (isBlank(ln)) {
+            let q = k + 1; while (q < L.length && isBlank(L[q])) q++;
+            if (q >= L.length || indentOf(norm(L[q])) < cm[1].length + 2) break;
+            for (; k < q; k++) sub.push('');
+            loose = true;
+            continue;
+          }
+          const ind = indentOf(ln);
+          if (ind >= cm[1].length + 2) sub.push(ln.slice(Math.min(ind, cIndent)));
+          else if (!isBlank(L[k - 1]) && !LI.test(ln) && !startsBlock(ln, k + 1 < L.length ? norm(L[k + 1]) : null)) sub.push(ln.trim()); // lazy continuation
+          else break;
+          k++;
+        }
+        items.push(sub);
+        let q = k; while (q < L.length && isBlank(L[q])) q++;
+        if (q > k && q < L.length) { const nm = norm(L[q]).match(LI); if (nm && nm[1].length < base + 2 && (nm[3] !== undefined) === ordered) loose = true; }
+        i = q > k && q < L.length && LI.test(norm(L[q])) ? q : k;
+      }
+      const html = items.map(sub => {
+        const t = !ordered && sub[0].match(/^\[([ xX])\][ \t]+/);
+        if (t) sub[0] = sub[0].slice(t[0].length);
+        return '<li' + (t ? ' class="task"' : '') + '>' + (t ? (t[1] === ' ' ? '<span class="ck" role="img" aria-label="not done">\u2610</span> ' : '<span class="ck on" role="img" aria-label="done">\u2611</span> ') : '') + blocks(sub, !loose, d + 1).join('') + '</li>';
+      }).join('');
+      out.push(ordered ? '<ol' + (+m[3] !== 1 ? ' start="' + (+m[3]) + '"' : '') + '>' + html + '</ol>' : '<ul>' + html + '</ul>');
+      continue;
+    }
+    const para = [l.trim()]; // paragraph
+    for (i++; i < L.length && !isBlank(L[i]) && !startsBlock(norm(L[i]), i + 1 < L.length ? norm(L[i + 1]) : null); i++) para.push(L[i].trim());
+    const t = inline(para.join('\n'));
+    out.push(tight ? t : '<p>' + t + '</p>');
+  }
+  return out;
+}
+const fmt = t => blocks(t.replace(/\r\n?/g, '\n').split('\n'), false, 0).join('');
 
 /* ---------- messages ---------- */
 function bubble(role, text, reasoning, secs) {
