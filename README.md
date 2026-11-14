@@ -5,7 +5,7 @@ A tiny, fast, portable chat client for [OpenRouter](https://openrouter.ai) and
 One small exe, no installer, no account, no telemetry. It is not an Electron app, so it
 stays light: the exe is about 6 MB.
 
-<img width="1117" height="902" alt="screnshot" src="https://github.com/user-attachments/assets/b9d1826f-6c7e-43cb-83e7-7bd15ac4717e" />
+<img width="1130" height="900" alt="screenshot" src="https://github.com/user-attachments/assets/2e55e2cc-735b-41c4-8715-20ce31ba9cdb" />
 
 ## Download
 
@@ -137,22 +137,6 @@ Reasoning tokens are billed as output tokens, so higher effort costs more and is
 Gemini chats send only the visible text of earlier turns back to the model (not Google's
 encrypted thought signatures), which is all plain text chat needs.
 This project is not affiliated with OpenRouter or Google.
-
-## Changelog
-
-**1.2**
-- Renamed from "OpenRouter Chat" to **Nanochat** (it is no longer OpenRouter-only). The program is
-  now `Nanochat.exe`. Your chats and settings live in the `data` folder next to it, so to keep them,
-  copy that folder next to the new exe.
-- 11 themes (plus Auto, which follows your system) to choose from in Settings, saved with your settings.
-
-**1.1**
-- Google AI Studio (Gemini) API key support: model list, streaming chat, thought summaries and
-  per-model thinking controls.
-- Fix: the model you last selected is now restored when the app starts (1.0 always showed the
-  first model in the list).
-
-**1.0** First release.
 
 ## License
 
