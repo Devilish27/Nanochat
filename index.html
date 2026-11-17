@@ -91,17 +91,94 @@ footer .wrap{flex-direction:row;align-items:flex-end;gap:8px}
 textarea{flex:1;resize:none;min-height:42px;background:var(--panel)}
 #status{max-width:780px;margin:0 auto 6px;color:var(--mute);font-size:12px;min-height:16px}
 #status.err{color:var(--err)}
+/* Local models: sidebar entry, parameter bar, reply stats, start screen, dialog, small screens. */
+[hidden]{display:none!important}
+button:disabled{opacity:.55;cursor:default}
+button.danger{border-color:var(--err);color:var(--err)}
+.brand{display:flex;align-items:center;gap:8px;font-weight:600}
+.badge{display:inline-flex;align-items:center;font-size:11px;font-weight:400;padding:1px 8px;border-radius:999px;background:var(--sel);color:var(--mute);border:1px solid var(--line);white-space:nowrap}
+.badge.on{color:var(--accent);border-color:var(--accent)}
+.dot{display:inline-block;width:8px;height:8px;flex:none;border-radius:50%;background:var(--mute);opacity:.5;margin-right:6px}
+.dot.on{background:var(--accent);opacity:1}
+#lm{display:flex;justify-content:space-between;align-items:center}
+#lm span{display:inline-flex;align-items:center}
+.it input{flex:1;padding:2px 6px}
+.it.ask button{visibility:visible}
+.bar button.sm{flex:none;font-size:13px}
+#menu{display:none;flex:none}
+#params{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:flex-end;padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);font-size:12px;color:var(--mute)}
+#params label{display:flex;flex-direction:column;gap:2px}
+#params input{width:76px;padding:4px 6px;font-size:13px}
+#params select,#params button{padding:4px 8px;font-size:13px}
+#params .sys{flex:1 1 100%;flex-direction:row;align-items:center;gap:8px;white-space:nowrap}
+#params .sys input{flex:1;width:auto}
+.meta{margin-top:8px;color:var(--mute);font-size:12px}
+.m.wait .body::before{content:"●";color:var(--mute);animation:pulse 1.1s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.25}}
+.hero{text-align:center;margin-top:7vh}
+.hero h1{font-size:1.45em;margin:12px 0 6px}
+.hero p{color:var(--mute);max-width:560px;margin:0 auto 16px}
+.starters{display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:left}
+.starters button{text-align:left;padding:10px 12px}
+.starters small{display:block;color:var(--mute);font-size:11px;margin-bottom:2px}
+.links{display:flex;gap:6px 16px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.lnk{border:0;background:none;padding:0;color:var(--accent);text-decoration:underline;font-size:13px}
+dialog{width:min(720px,94vw);max-height:88vh;padding:0;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);overflow:hidden}
+dialog[open]{display:flex;flex-direction:column}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+.mh{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.mh b{font-size:16px;flex:1}
+.mh button{border:0;background:none;font-size:20px;line-height:1;padding:0 6px;color:var(--mute)}
+.tabs{display:flex;gap:4px;padding:8px 14px 0;border-bottom:1px solid var(--line)}
+.tabs button{border:0;border-bottom:2px solid transparent;border-radius:0;background:none;color:var(--mute);padding:6px 10px}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+.mb{padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+.mb [data-pane],#mlist{display:flex;flex-direction:column;gap:12px}
+.mb form,.mc,#drop{border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:8px;background:var(--bg)}
+.mb input{background:var(--panel)}
+.mb .hint{margin:0}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.row input{flex:1}
+.mi{color:var(--mute);font-size:12.5px}
+.mc .row button{font-size:13px;padding:5px 10px}
+.mc .m{margin-top:4px;max-height:46vh;overflow:auto}
+.chip{font-size:12px;padding:2px 9px;border-radius:999px}
+#mnote{padding:8px 10px;border-radius:6px;background:var(--sel);font-size:13px}
+#mnote.err{color:var(--err)}
+#mprog{font-size:13px}
+#mprog .row{justify-content:space-between}
+.pb{height:6px;border-radius:3px;background:var(--sel);overflow:hidden;margin-top:6px}
+.pb i{display:block;height:100%;background:var(--accent);transition:width .2s}
+.pb i.ind{animation:slide 1.2s linear infinite}
+@keyframes slide{from{margin-left:-35%}to{margin-left:100%}}
+#drop{align-items:center;text-align:center;border-style:dashed;padding:22px 12px}
+#drop.over{border-color:var(--accent);background:var(--sel)}
+#uplist{color:var(--mute);font-size:12.5px;overflow-wrap:anywhere}
+@media (max-width:720px){
+aside{position:fixed;z-index:5;top:0;bottom:0;left:0;width:min(280px,84vw);transform:translateX(-100%);transition:transform .2s;box-shadow:0 0 30px rgba(0,0,0,.3)}
+body.nav aside{transform:none}
+body.nav::after{content:"";position:fixed;inset:0;z-index:4;background:rgba(0,0,0,.4)}
+#menu{display:block}
+.bar{flex-wrap:wrap}
+.bar #filter{flex:1 1 60px}
+.bar #model{flex:1 1 100%;order:9}
+.starters{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 <aside>
+  <div class="brand">Nanochat <span class="badge" title="Includes an engine that runs local models on this device">local</span></div>
   <button id="new" class="primary">New chat</button>
   <div id="list"></div>
+  <button id="lm" title="Manage, import or upload local models"><span><span class="dot" id="lmdot"></span>Local models</span><span class="badge" id="lmn">0</span></button>
   <details id="set">
     <summary>Settings</summary>
     <label>OpenRouter API key<input id="key" type="password" placeholder="sk-or-…" autocomplete="off" spellcheck="false"></label>
     <label>Google AI Studio (Gemini) API key<input id="gkey" type="password" placeholder="AIza…" autocomplete="off" spellcheck="false"></label>
-    <p class="hint">Use either key, or both. Free Gemini key: <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">aistudio.google.com/apikey</a></p>
+    <label>Local server URL (Ollama / LM Studio)<input id="srv" type="url" placeholder="http://127.0.0.1:11434/v1" autocomplete="off" spellcheck="false"></label>
+    <label>Local server API key (optional)<input id="srvkey" type="password" autocomplete="off" spellcheck="false"></label>
+    <p class="hint">Built-in local models need no key. Optional cloud keys: <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer">openrouter.ai</a> · <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">aistudio.google.com</a></p>
     <div class="lbl">Theme: <b id="tname">Auto</b></div>
     <div id="themes" role="group" aria-label="Theme"></div>
     <button id="quit">Quit app</button>
@@ -109,10 +186,24 @@ textarea{flex:1;resize:none;min-height:42px;background:var(--panel)}
 </aside>
 <main>
   <div class="bar">
+    <button id="menu" title="Chats and settings" aria-label="Open sidebar">☰</button>
     <input id="filter" type="search" placeholder="Filter models…">
     <select id="model" aria-label="Model"><option value="">Loading models…</option></select>
     <button id="fav" title="Add or remove from favorites">☆</button>
+    <button id="bparams" class="sm" hidden title="Configure local sampling and prompt format">Params</button>
+    <button id="bmodel" class="sm" hidden title="Manage, import, or upload local models">+ Model</button>
     <select id="effort" aria-label="Thinking effort" style="display:none"></select>
+  </div>
+  <div id="params" hidden role="group" aria-label="Local model parameters">
+    <label>Format<select id="pf"><option value="auto">Auto</option><option value="qa">Q&amp;A (Question / Answer)</option><option value="chat">Chat (User / Assistant)</option><option value="chatml">ChatML (&lt;|im_start|&gt;)</option><option value="raw">Raw completion</option></select></label>
+    <label>Temp<input id="pt" type="number" min="0" max="2" step="0.05"></label>
+    <label>Top-P<input id="pp" type="number" min="0.05" max="1" step="0.05"></label>
+    <label>Top-K<input id="pk" type="number" min="0" max="500" step="5"></label>
+    <label>Repeat<input id="pr" type="number" min="1" max="2" step="0.05"></label>
+    <label>Max tok<input id="pm" type="number" min="16" max="2048" step="16"></label>
+    <button id="bram" hidden></button>
+    <button id="preset">Reset</button>
+    <label class="sys">System prompt<input id="psys" type="text" placeholder="Optional instruction prepended to local model prompts…"></label>
   </div>
   <div class="lw"><div id="log"><div class="wrap" id="msgs"></div></div><button id="down" hidden title="Jump to latest">↓ Latest</button></div>
   <footer>
@@ -124,6 +215,51 @@ textarea{flex:1;resize:none;min-height:42px;background:var(--panel)}
   </footer>
 </main>
 
+<dialog id="mm" aria-labelledby="mmt">
+  <div class="mh"><b id="mmt">Local models</b><span class="badge" id="mram">0 B in RAM</span><button id="mx" title="Close" aria-label="Close local models dialog">×</button></div>
+  <div class="tabs" role="tablist">
+    <button role="tab" data-tab="inst">Installed</button>
+    <button role="tab" data-tab="imp">Import URL / Hub</button>
+    <button role="tab" data-tab="up">Upload</button>
+  </div>
+  <div class="mb">
+    <div id="mnote" role="status" hidden></div>
+    <div id="mprog" hidden><div class="row"><span id="mpmsg"></span><span id="mppct"></span></div><div class="pb"><i id="mpbar"></i></div></div>
+    <div data-pane="inst">
+      <div id="mlist"></div>
+      <p class="hint">Built-in CPU inference runs <code>.safetensors</code> models directly on this device (INT8, BF16, FP16, FP32 · TinyLM, Llama, SmolLM, Qwen2/3, Mistral, Gemma, GPT-2) with zero cloud traffic or API keys. Models live in the <code>data/models</code> folder next to the program; a model folder copied there by hand shows up here too.</p>
+    </div>
+    <div data-pane="imp" hidden>
+      <form id="fzip">
+        <b>Import from .zip archive URL</b>
+        <p class="hint">A zip that holds <code>model.safetensors</code>, <code>config.json</code> and <code>tokenizer.json</code> (at the top level or inside one folder). Up to 900 MB.</p>
+        <input id="zurl" type="url" placeholder="https://example.com/my-model.zip" autocomplete="off" spellcheck="false">
+        <div class="row"><input id="zname" placeholder="Display name (optional)" autocomplete="off"><button class="primary">Download &amp; install</button></div>
+      </form>
+      <form id="fhf">
+        <b>Import from HuggingFace Hub</b>
+        <p class="hint">A repository with a single <code>model.safetensors</code> file and a <code>tokenizer.json</code>. Small models (up to a few hundred million parameters) are practical on a CPU.</p>
+        <input id="hrepo" placeholder="HuggingFaceTB/SmolLM2-135M-Instruct" autocomplete="off" spellcheck="false">
+        <div class="row"><input id="hname" placeholder="Display name (optional)" autocomplete="off"><button class="primary">Import from Hub</button></div>
+        <div class="row"><span class="mi">Quick pick:</span>
+          <button type="button" class="chip" data-repo="HuggingFaceTB/SmolLM2-135M-Instruct" data-name="SmolLM2-135M-Instruct" title="Small chat model, about 260 MB download">SmolLM2-135M-Instruct</button>
+          <button type="button" class="chip" data-repo="openai-community/gpt2" data-name="GPT-2 (124M)" title="Classic text completion model, about 550 MB download">GPT-2 (124M)</button>
+        </div>
+      </form>
+    </div>
+    <div data-pane="up" hidden>
+      <div id="drop">
+        <b>Drop a model <code>.zip</code> or model files here</b>
+        <p class="hint">Accepts a zipped model folder or the individual files (<code>model.safetensors</code>, <code>config.json</code>, <code>tokenizer.json</code>, optional <code>tokenizer_config.json</code> / <code>MODEL_CARD.md</code>).</p>
+        <div class="row"><button type="button" id="pickzip">Choose .zip archive</button><button type="button" id="pickfiles">Choose model files</button></div>
+        <div id="uplist"></div>
+      </div>
+      <input type="file" id="inzip" accept=".zip" hidden><input type="file" id="infiles" multiple accept=".safetensors,.json,.md,.txt,.model" hidden>
+      <div class="row"><input id="uname" placeholder="Custom model name (optional)" autocomplete="off"><button id="upgo" class="primary" disabled>Install uploaded model</button></div>
+    </div>
+  </div>
+</dialog>
+
 <script>
 const $ = id => document.getElementById(id);
 const api = async (method, url, body) => {
@@ -133,10 +269,23 @@ const api = async (method, url, body) => {
 };
 const newChat = () => ({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), title: 'New chat', model: '', updated: '', messages: [] });
 
-let S = { key: '', gkey: '', favorites: [], model: '', effort: '', theme: 'auto' };
+const LP0 = { temperature: 0.5, topP: 0.9, topK: 40, repeatPenalty: 1.1, maxTokens: 160, promptFormat: 'auto', systemPrompt: '' }; // local sampling defaults
+let S = { key: '', gkey: '', localServerUrl: '', localServerKey: '', favorites: [], model: '', effort: '', theme: 'auto', localParams: Object.assign({}, LP0) };
 let models = [], orModels = [], gemModels = [], loading = 0, gemSeq = 0, chat = newChat(), ctrl = null;
+let locModels = [], srvModels = [], srvSeq = 0, rtInfo = { loadedIds: [], totalRamBytes: 0 }, showParams = false;
 const GEM = 'https://generativelanguage.googleapis.com/v1beta/';
 const isGem = id => (id || '').startsWith('gemini:'); // Gemini models are listed as "gemini:<model name>"
+const isLoc = id => (id || '').startsWith('local:');   // models run by the built-in engine: "local:<folder name>"
+const isSrv = id => (id || '').startsWith('server:');  // models of an OpenAI-compatible local server (Ollama, LM Studio)
+// like api(), but reports the server's own error message
+const call = async (method, url, body) => {
+  const r = await fetch(url, { method, body: body === undefined ? undefined : JSON.stringify(body) });
+  const j = r.status === 204 ? null : await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error((j && j.error && (j.error.message || j.error)) || r.status + ' ' + r.statusText);
+  return j;
+};
+const fmtBytes = n => { n = +n || 0; const u = ['B', 'KB', 'MB', 'GB']; let i = 0; while (n >= 1024 && i < 3) { n /= 1024; i++; } return (i && n < 100 ? n.toFixed(1) : Math.round(n)) + ' ' + u[i]; };
+const fmtParams = n => { n = +n || 0; return n >= 1e9 ? (n / 1e9).toFixed(2) + 'B' : n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? Math.round(n / 1e3) + 'K' : String(n); };
 
 /* ---------- themes ---------- */
 const THEMES = [['auto', 'Auto (system)'], ['light', 'Light'], ['paper', 'Paper'], ['sky', 'Sky'], ['rose', 'Rose'], ['dark', 'Dark'], ['midnight', 'Midnight'], ['nord', 'Nord'], ['forest', 'Forest'], ['violet', 'Violet'], ['terminal', 'Terminal'], ['contrast', 'High contrast']]; // keep in sync with the [data-theme] blocks in the CSS
@@ -311,7 +460,7 @@ function blocks(L, tight, d) {
 const fmt = t => blocks(t.replace(/\r\n?/g, '\n').split('\n'), false, 0).join('');
 
 /* ---------- messages ---------- */
-function bubble(role, text, reasoning, secs) {
+function bubble(role, text, reasoning, secs, stats, model) {
   const d = document.createElement('div');
   d.className = 'm ' + role;
   if (role === 'user') d.textContent = text;
@@ -320,9 +469,17 @@ function bubble(role, text, reasoning, secs) {
     b.className = 'body'; b.innerHTML = fmt(text);
     d.appendChild(b);
     if (reasoning) setThink(d, reasoning, secs === undefined ? null : secs, false);
+    setMeta(d, stats, model);
   }
   $('msgs').appendChild(d);
   return d;
+}
+// One quiet line under a local reply: model, tokens, speed and how full the context is.
+function setMeta(d, s, model) {
+  if (!s) return;
+  let e = d.querySelector('.meta');
+  if (!e) { e = document.createElement('div'); e.className = 'meta'; d.appendChild(e); }
+  e.textContent = [s.modelName || (model || '').replace(/^local:/, ''), s.completionTokens + ' tok', s.tokensPerSec + ' tok/s', 'ctx ' + (s.promptTokens + s.completionTokens) + '/' + s.contextLimit].join(' · ');
 }
 function setThink(d, text, secs, open) {
   let t = d.querySelector('.think');
@@ -344,9 +501,40 @@ const scroll = force => {
   $('down').hidden = stick;
 };
 function renderChat() {
-  $('msgs').innerHTML = chat.messages.length ? '' : '<div class="empty">Add an API key (OpenRouter or Google AI Studio) under Settings, pick a model and start typing.</div>';
-  chat.messages.forEach(m => bubble(m.role, m.content, m.reasoning, m.secs));
+  const m = locModels.find(x => x.id === $('model').value);
+  $('msgs').innerHTML = '';
+  if (!chat.messages.length) $('msgs').appendChild(m ? hero(m) : emptyNote());
+  chat.messages.forEach(x => bubble(x.role, x.content, x.reasoning, x.secs, x.stats, x.model));
   scroll(true);
+}
+function emptyNote() {
+  const d = document.createElement('div');
+  d.className = 'empty';
+  d.innerHTML = 'Run a local safetensors model offline, or add an API key (OpenRouter or Google AI Studio) under Settings, pick a model and start typing.<div class="links"><button class="lnk">Manage local models</button></div>';
+  d.querySelector('button').onclick = () => openModels('inst');
+  return d;
+}
+/* Start screen for a local model: what it is, a few prompts to try, and where to go next. */
+const STARTERS = {
+  tinylm: [['Word problem', 'Rosa had 12 apples and gave away 5. How many are left?'], ['Story continuation', 'Once upon a time, there was a friendly little bird'], ['Language Q&A', 'How many vowels are in the word "tiger"?'], ['Vocabulary Q&A', 'What is the opposite of cold?']],
+  other: [['Explain simply', 'Explain how rainbows form in three short sentences.'], ['Quick code', 'Write a short JavaScript function to reverse the words in a sentence.'], ['Creative story', 'Once upon a time, there was a curious cat who loved maps.'], ['Brainstorm', 'Give me four weekend project ideas for learning programming.']]
+};
+function hero(m) {
+  const d = document.createElement('div');
+  d.className = 'hero';
+  d.innerHTML = '<span class="badge"><span class="dot' + (m.loaded ? ' on' : '') + '"></span>' + (m.loaded ? 'Loaded in RAM · ' + fmtBytes(m.ramBytes) : 'Ready on device · no API key needed') + '</span><h1>' + esc(m.name) + '</h1><p>' +
+    fmtParams(m.paramsTotal) + ' parameters · ' + esc(m.quantization) + ' safetensors · ' + Math.min(m.contextLength, 2048) + '-token context. Runs locally on CPU with streaming output, or switch to OpenRouter / Gemini anytime.</p><div class="starters"></div><div class="links"></div>';
+  (STARTERS[m.modelType] || STARTERS.other).forEach(([tag, text]) => {
+    const b = document.createElement('button'), t = document.createElement('small');
+    t.textContent = tag; b.append(t, text);
+    b.onclick = () => send(text);
+    d.querySelector('.starters').appendChild(b);
+  });
+  const link = (text, fn) => { const b = document.createElement('button'); b.className = 'lnk'; b.textContent = text; b.onclick = fn; d.querySelector('.links').appendChild(b); };
+  link('Import or upload a local model', () => openModels('imp'));
+  if (m.modelCard) link('Read model card', () => openModels('inst', m.slug));
+  link('Add OpenRouter / Gemini key', () => { document.body.classList.add('nav'); $('set').open = true; $('key').focus(); });
+  return d;
 }
 function status(t, err) { $('status').textContent = t || ''; $('status').className = err ? 'err' : ''; }
 
@@ -362,23 +550,47 @@ async function refreshList() {
     row.title = new Date(c.updated).toLocaleString() + ' (double-click to rename)';
     const t = document.createElement('span'); t.textContent = c.title;
     const x = document.createElement('button'); x.textContent = '×'; x.title = 'Delete chat';
-    row.append(t, x);
+    const ed = document.createElement('button'); ed.textContent = '✎'; ed.title = 'Rename chat';
+    row.append(t, ed, x);
     row.onclick = () => openChat(c.id);
-    row.ondblclick = async () => {
-      const name = prompt('Rename chat', c.title);
-      if (!name || !name.trim()) return;
-      const full = await api('GET', '/api/chats/' + c.id);
-      full.title = name.trim();
-      await api('PUT', '/api/chats/' + c.id, full);
-      if (chat.id === c.id) chat.title = full.title;
-      refreshList();
+    const rename = () => { // the title becomes a text box: Enter or clicking away saves, Escape cancels
+      if (row.classList.contains('ask')) return;
+      const inp = document.createElement('input');
+      inp.value = c.title; inp.maxLength = 120; inp.setAttribute('aria-label', 'Chat title');
+      let ended = false;
+      const end = async save => {
+        if (ended) return;
+        ended = true;
+        const name = inp.value.trim();
+        if (save && name && name !== c.title) {
+          try {
+            const full = await api('GET', '/api/chats/' + c.id);
+            full.title = name;
+            await api('PUT', '/api/chats/' + c.id, full);
+            if (chat.id === c.id) chat.title = name;
+          } catch { status('Could not rename that chat.', true); }
+        }
+        refreshList();
+      };
+      inp.onclick = inp.ondblclick = e => e.stopPropagation();
+      inp.onkeydown = e => { if (e.key === 'Enter') end(true); else if (e.key === 'Escape') end(false); };
+      inp.onblur = () => end(true);
+      row.replaceChild(inp, t); row.classList.add('ask');
+      inp.focus(); inp.select();
     };
-    x.onclick = async e => {
+    row.ondblclick = rename;
+    ed.onclick = e => { e.stopPropagation(); rename(); };
+    x.onclick = e => { // the first click asks in place, the second one deletes
       e.stopPropagation();
-      if (!confirm('Delete “' + c.title + '”?')) return;
-      await api('DELETE', '/api/chats/' + c.id);
-      if (chat.id === c.id) startNew();
-      refreshList();
+      if (!row.classList.contains('ask')) {
+        row.classList.add('ask');
+        t.textContent = 'Delete “' + c.title + '”?';
+        x.textContent = '✓'; x.title = 'Confirm delete';
+        ed.textContent = '✕'; ed.title = 'Cancel';
+        ed.onclick = ev => { ev.stopPropagation(); refreshList(); };
+        return;
+      }
+      api('DELETE', '/api/chats/' + c.id).then(() => { if (chat.id === c.id) startNew(); refreshList(); }).catch(() => status('Could not delete that chat.', true));
     };
     list.appendChild(row);
   });
@@ -405,7 +617,7 @@ async function saveChat(c) {
 function opt(m) {
   const o = document.createElement('option');
   o.value = m.id;
-  o.textContent = (m.name || m.id) + (m.pricing && +m.pricing.prompt === 0 && +m.pricing.completion === 0 ? ' (free)' : '');
+  o.textContent = (m.name || m.id) + (m.loc ? ' · ' + fmtParams(m.paramsTotal) + ' ' + m.quantization : '') + (m.pricing && +m.pricing.prompt === 0 && +m.pricing.completion === 0 ? ' (free)' : '');
   return o;
 }
 function fillModels() {
@@ -428,12 +640,15 @@ function fillModels() {
     list.forEach(m => g.appendChild(opt(m))); sel.appendChild(g);
   };
   group('★ Favorites', favs);
+  group('Local models (on this device)', rest.filter(m => m.loc));
+  group('Local server', rest.filter(m => m.srv));
   group('Google AI Studio (Gemini)', rest.filter(m => m.gem));
-  group(gemModels.length ? 'OpenRouter models' : 'All models', rest.filter(m => !m.gem));
+  group(models.length > orModels.length ? 'OpenRouter models' : 'All models', rest.filter(m => !m.gem && !m.loc && !m.srv));
   if ([...sel.options].some(o => o.value === cur)) sel.value = cur; /* else keep first option */
   updateFav(); fillEffort();
 }
 function fillEffort() {
+  localUI();
   const sel = $('effort'), m = models.find(x => x.id === $('model').value);
   let list = null, dflt = '', off = false; // list = effort values offered for this model
   if (m && m.gem) {
@@ -458,7 +673,187 @@ function fillEffort() {
 }
 function updateFav() { $('fav').textContent = S.favorites.includes($('model').value) ? '★' : '☆'; }
 const saveSettings = () => api('PUT', '/api/settings', S).catch(() => status('Could not save settings.', true));
-const settle = () => { models = gemModels.concat(orModels); fillModels(); loading = Math.max(0, loading - 1); };
+const settle = () => { models = locModels.concat(srvModels, gemModels, orModels); fillModels(); loading = Math.max(0, loading - 1); };
+
+/* ---------- local models and local servers ---------- */
+// Everything that depends on which kind of model is selected. Called whenever the selection may have changed.
+function localUI() {
+  const id = $('model').value, m = locModels.find(x => x.id === id), own = isLoc(id) || isSrv(id);
+  $('bparams').hidden = !own; $('bmodel').hidden = !isLoc(id);
+  $('params').hidden = !(own && showParams);
+  $('bparams').setAttribute('aria-pressed', String(own && showParams));
+  $('bram').hidden = !m;
+  if (m) $('bram').innerHTML = '<span class="dot' + (m.loaded ? ' on' : '') + '"></span>' + (m.loaded ? 'In RAM (' + fmtBytes(m.ramBytes) + ') · Unload' : 'Preload in RAM');
+  $('input').placeholder = 'Message' + (m ? ' ' + m.name : '') + '…' + (innerWidth < 720 ? '' : ' (Enter to send, Shift+Enter for a new line)'); // the hint does not fit on a phone
+  $('lmn').textContent = locModels.length;
+  $('lmdot').className = 'dot' + (rtInfo.loadedIds.length ? ' on' : '');
+  if (!chat.messages.length && !ctrl) renderChat(); // the start screen describes the selected model
+}
+async function loadLocal() {
+  try {
+    const j = await api('GET', '/api/local/models');
+    locModels = (j.models || []).map(m => Object.assign(m, { slug: m.id, id: m.modelId, loc: true }));
+    rtInfo = j.runtime || rtInfo;
+  } catch {}
+  settle();
+  if ($('mm').open) drawModels();
+}
+// Models of an OpenAI-compatible server on this computer or network (Ollama, LM Studio, llama.cpp).
+async function loadServer(announce) {
+  const my = ++srvSeq, base = (S.localServerUrl || '').trim().replace(/\/+$/, ''), key = (S.localServerKey || '').trim();
+  let list = [];
+  if (base) {
+    if (announce) status('Checking local server models…');
+    try {
+      const r = await fetch(base + (base.endsWith('/v1') ? '' : '/v1') + '/models', { headers: key ? { Authorization: 'Bearer ' + key } : {} });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error((j.error && (j.error.message || j.error)) || r.status + ' ' + r.statusText);
+      list = (Array.isArray(j.data) ? j.data : Array.isArray(j.models) ? j.models : [])
+        .map(m => { const id = m.id || m.name || ''; return { id: 'server:' + id, name: m.name || id, srv: true }; }).filter(m => m.id !== 'server:');
+      if (announce && my === srvSeq) status(list.length ? 'Connected to local server (' + list.length + ' model' + (list.length === 1 ? '' : 's') + ').' : 'Local server responded, but returned no models.', !list.length);
+    } catch (e) { if (announce && my === srvSeq) status('Could not reach local server: ' + e.message, true); }
+  }
+  if (my !== srvSeq) return; // a newer check (URL changed again) has taken over
+  srvModels = list;
+  settle();
+}
+function pick(id) { // select a model in the picker, as if the user had done it
+  $('filter').value = '';
+  fillModels();
+  if ([...$('model').options].some(o => o.value === id)) $('model').value = id;
+  S.model = $('model').value;
+  updateFav(); fillEffort(); saveSettings();
+}
+const PF = [['pt', 'temperature', 0, 2], ['pp', 'topP', 0.05, 1], ['pk', 'topK', 0, 500], ['pr', 'repeatPenalty', 1, 2], ['pm', 'maxTokens', 16, 2048]]; // input id, setting, min, max
+function fillParams() {
+  PF.forEach(([id, k]) => { $(id).value = S.localParams[k]; });
+  $('pf').value = S.localParams.promptFormat; $('psys').value = S.localParams.systemPrompt;
+}
+function locReq(model, messages) {
+  const p = S.localParams;
+  return { url: '/api/local/chat', headers: { 'Content-Type': 'application/json' },
+    body: { model, messages, stream: true, temperature: p.temperature, top_p: p.topP, top_k: p.topK, repetition_penalty: p.repeatPenalty, max_tokens: p.maxTokens, prompt_format: p.promptFormat, system_prompt: p.systemPrompt } };
+}
+function srvReq(model, messages) {
+  const p = S.localParams, base = (S.localServerUrl || '').trim().replace(/\/+$/, ''), key = (S.localServerKey || '').trim(), sys = (p.systemPrompt || '').trim();
+  const headers = { 'Content-Type': 'application/json' };
+  if (key) headers.Authorization = 'Bearer ' + key;
+  return { url: base + (base.endsWith('/v1') ? '' : '/v1') + '/chat/completions', headers,
+    body: { model: model.replace(/^server:/, ''), messages: (sys ? [{ role: 'system', content: sys }] : []).concat(messages), stream: true, temperature: p.temperature, top_p: p.topP, max_tokens: p.maxTokens } };
+}
+
+/* ---------- local models dialog ---------- */
+let cardOpen = '', busy = false, upFiles = [];
+const note = (t, err) => { $('mnote').hidden = !t; $('mnote').textContent = t || ''; $('mnote').className = err ? 'err' : ''; };
+const prog = (msg, pct) => { // no arguments hides the bar; pct null shows a moving bar
+  $('mprog').hidden = msg === undefined;
+  $('mpmsg').textContent = msg || ''; $('mppct').textContent = pct == null ? '' : pct + '%';
+  $('mpbar').style.width = pct == null ? '35%' : pct + '%'; $('mpbar').className = pct == null ? 'ind' : '';
+};
+function showTab(t) {
+  document.querySelectorAll('#mm [data-tab]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === t)));
+  document.querySelectorAll('#mm [data-pane]').forEach(p => { p.hidden = p.dataset.pane !== t; });
+}
+function openModels(tab, card) {
+  document.body.classList.remove('nav');
+  cardOpen = card || ''; note('');
+  showTab(tab || 'inst'); drawModels();
+  if (!$('mm').open) $('mm').showModal();
+  loadLocal();
+}
+function drawModels() {
+  $('mram').textContent = fmtBytes(rtInfo.totalRamBytes) + ' in RAM';
+  document.querySelector('#mm [data-tab=inst]').textContent = 'Installed (' + locModels.length + ')';
+  const box = $('mlist');
+  box.innerHTML = locModels.length ? '' : '<div class="mc"><b>No local models installed</b><p class="hint">Import a safetensors model archive from a URL or HuggingFace, or upload model files from this computer.</p><div class="row"><button class="primary" data-go="imp">Import a model</button><button data-go="up">Upload files</button></div></div>';
+  box.querySelectorAll('[data-go]').forEach(b => { b.onclick = () => showTab(b.dataset.go); });
+  locModels.forEach(m => {
+    const sel = $('model').value === m.id, open = cardOpen === m.slug && m.modelCard, d = document.createElement('div');
+    d.className = 'mc';
+    d.innerHTML = '<div class="row"><b>' + esc(m.name) + '</b>' + (sel ? '<span class="badge on">Selected</span>' : '') + '<span class="badge"><span class="dot' + (m.loaded ? ' on' : '') + '"></span>' + (m.loaded ? 'Loaded · ' + fmtBytes(m.ramBytes) : 'On disk') + '</span></div>' +
+      '<div class="mi">' + esc([m.arch, fmtParams(m.paramsTotal) + ' params', m.quantization, m.contextLength + ' ctx', m.layers + ' layers', fmtBytes(m.sizeBytes), m.sourceType].join(' · ')) + '</div>' +
+      '<div class="row"><button class="primary" data-a="use">' + (sel ? 'Chat with model' : 'Use model') + '</button><button data-a="ram">' + (m.loaded ? 'Unload RAM' : 'Load in RAM') + '</button>' +
+      (m.modelCard ? '<button data-a="card">' + (open ? 'Hide card' : 'Model card') + '</button>' : '') + '<button data-a="del">Remove</button></div>' +
+      (open ? '<div class="m assistant"><div class="body">' + fmt(m.modelCard) + '</div></div>' : ''); // fmt() escapes everything: a model card is untrusted text
+    d.onclick = e => { const b = e.target.closest('button[data-a]'); if (b) modelAct(m, b); };
+    box.appendChild(d);
+  });
+}
+async function modelAct(m, b) {
+  const a = b.dataset.a;
+  if (a === 'use') { pick(m.id); $('mm').close(); $('input').focus(); return; }
+  if (a === 'card') { cardOpen = cardOpen === m.slug ? '' : m.slug; drawModels(); return; }
+  if (a === 'del' && !b.dataset.sure) { // ask once, in place
+    b.dataset.sure = '1'; b.textContent = 'Confirm remove'; b.classList.add('danger');
+    setTimeout(() => { if (b.isConnected && !b.disabled) { delete b.dataset.sure; b.textContent = 'Remove'; b.classList.remove('danger'); } }, 4000);
+    return;
+  }
+  b.disabled = true; b.textContent = 'Working…';
+  try {
+    let t;
+    if (a === 'del') { await call('DELETE', '/api/local/models/' + m.slug); t = 'Removed local model ' + m.name + '.'; }
+    else {
+      const j = await call('POST', '/api/local/models/' + m.slug + '/load', { action: m.loaded ? 'unload' : 'load' });
+      t = j.loaded ? 'Loaded ' + m.name + ' into RAM (' + fmtBytes(j.ramBytes) + ') in ' + (j.loadMs / 1000).toFixed(1) + ' s.' : 'Unloaded ' + m.name + ' from RAM.';
+    }
+    note(t); status(t);
+  } catch (e) { note(e.message, true); }
+  await loadLocal();
+}
+function installed(m) {
+  const t = 'Installed ' + m.name + '. It is selected and ready to chat.';
+  note(t); status(t); cardOpen = '';
+  loadLocal().then(() => { pick(m.modelId); showTab('inst'); drawModels(); });
+}
+// Import from a URL or the Hub. The server streams progress events while it downloads and checks the model.
+async function runImport(body) {
+  if (busy) return;
+  busy = true; note(''); prog('Starting import…', null);
+  try {
+    const r = await fetch('/api/local/models/import', { method: 'POST', body: JSON.stringify(Object.assign({ stream: true }, body)) });
+    if (!r.ok || !r.body) { const j = await r.json().catch(() => ({})); throw new Error(j.error || r.status + ' ' + r.statusText); }
+    const rd = r.body.getReader(), dec = new TextDecoder();
+    let buf = '', model = null;
+    for (;;) {
+      const { done, value } = await rd.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      const lines = buf.split('\n'); buf = lines.pop();
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        let j; try { j = JSON.parse(line.slice(6)); } catch { continue; }
+        if (j.type === 'error') throw new Error(j.error || 'Model import failed.');
+        if (j.type === 'done') model = j.model;
+        if (j.type === 'progress') prog(j.message, j.totalBytes ? Math.min(100, Math.round(j.downloadedBytes / j.totalBytes * 100)) : null);
+      }
+    }
+    if (!model) throw new Error('The import stopped before it finished. Is Nanochat still running?');
+    installed(model);
+  } catch (e) { note(e.message || 'Failed to import model.', true); }
+  busy = false; prog();
+}
+function setUpload(files) {
+  upFiles = [...files];
+  $('uplist').textContent = upFiles.map(f => f.name + ' (' + fmtBytes(f.size) + ')').join(' · ');
+  $('upgo').disabled = !upFiles.length;
+}
+function upload() { // XMLHttpRequest, because fetch cannot report upload progress
+  if (busy || !upFiles.length) return;
+  busy = true; note('');
+  const fd = new FormData(), name = $('uname').value.trim(), x = new XMLHttpRequest();
+  if (name) fd.append('name', name);
+  upFiles.forEach(f => fd.append('files', f, f.name));
+  const end = (ok, j) => {
+    busy = false; prog();
+    if (ok && j.model) { setUpload([]); $('uname').value = ''; installed(j.model); } else note(j.error || 'Upload failed.', true);
+  };
+  x.open('POST', '/api/local/models/upload');
+  x.upload.onprogress = e => { if (e.lengthComputable) { const p = Math.round(e.loaded / e.total * 100); prog(p >= 100 ? 'Extracting and validating model…' : 'Uploading model files…', p >= 100 ? null : p); } };
+  x.onload = () => { let j = {}; try { j = JSON.parse(x.responseText); } catch {} end(x.status === 201, j); };
+  x.onerror = () => end(false, {});
+  prog('Uploading model files…', 0);
+  x.send(fd);
+}
 async function loadOpenRouter() {
   try {
     const j = await (await fetch('https://openrouter.ai/api/v1/models')).json();
@@ -509,13 +904,15 @@ async function loadGemini() {
 }
 
 /* ---------- sending ---------- */
-async function send() {
+async function send(preset) { // preset: text of a starter prompt; otherwise the text box is sent
   if (ctrl) return;
-  const text = $('input').value.trim(), model = $('model').value, gem = isGem(model);
+  const text = (typeof preset === 'string' ? preset : $('input').value).trim(), model = $('model').value, gem = isGem(model), loc = isLoc(model), srv = isSrv(model);
   const keyEl = gem ? $('gkey') : $('key'), key = keyEl.value.trim();
+  // local models and local servers need no key
+  const name = loc ? (locModels.find(x => x.id === model) || {}).name || model.slice(6) : model.replace(/^(gemini|server):/, '');
   if (!text) return;
   if (!model) { status('Pick a model first.', true); return; }
-  if (!key) { $('set').open = true; keyEl.focus(); status('Enter your ' + (gem ? 'Google AI Studio (Gemini)' : 'OpenRouter') + ' API key under Settings.', true); return; }
+  if (!key && !loc && !srv) { $('set').open = true; keyEl.focus(); status('Enter your ' + (gem ? 'Google AI Studio (Gemini)' : 'OpenRouter') + ' API key under Settings.', true); return; }
 
   const c = chat;
   if (!c.messages.length) $('msgs').innerHTML = '';
@@ -524,13 +921,14 @@ async function send() {
   $('input').value = ''; autosize(); scroll(true);
 
   const body = el.querySelector('.body');
-  let reply = '', thinking = '', secs = null, t0 = 0, failed = null, finish = '', blocked = '';
+  let reply = '', thinking = '', secs = null, t0 = 0, failed = null, finish = '', blocked = '', stats = null, ntok = 0, tgen = 0;
+  el.classList.add('wait');
   ctrl = new AbortController();
   $('send').textContent = 'Stop';
-  status('Waiting for ' + model.replace(/^gemini:/, '') + '…');
+  status((loc ? 'Running ' : 'Waiting for ') + name + '…');
   try {
     const msgs = c.messages.map(({ role, content }) => ({ role, content })), effort = $('effort').value;
-    const req = gem
+    const req = loc ? locReq(model, msgs) : srv ? srvReq(model, msgs) : gem
       ? { url: GEM + 'models/' + encodeURIComponent(model.replace(/^gemini:/, '')) + ':streamGenerateContent?alt=sse',
           headers: { 'x-goog-api-key': key, 'Content-Type': 'application/json' },
           body: gemBody(msgs, models.find(x => x.id === model), effort) }
@@ -540,7 +938,7 @@ async function send() {
     const r = await fetch(req.url, { method: 'POST', signal: ctrl.signal, headers: req.headers, body: JSON.stringify(req.body) });
     if (!r.ok) {
       let msg = r.status + ' ' + r.statusText;
-      try { let e = await r.json(); if (Array.isArray(e)) e = e[0]; msg = e.error.message || msg; } catch {}
+      try { let e = await r.json(); if (Array.isArray(e)) e = e[0]; msg = e.error.message || (typeof e.error === 'string' && e.error) || msg; } catch {}
       throw new Error(msg);
     }
     const rd = r.body.getReader(), dec = new TextDecoder();
@@ -555,7 +953,8 @@ async function send() {
         const d = line.slice(6).trim();
         if (d === '[DONE]') continue;
         let j; try { j = JSON.parse(d); } catch { continue; }
-        if (j.error) throw new Error(j.error.message || 'Stream error');
+        if (j.error) throw new Error(j.error.message || (typeof j.error === 'string' && j.error) || 'Stream error');
+        if (j.nanochat_stats) stats = j.nanochat_stats; // sent by the built-in engine with the last chunk
         let rs = '', ct = '';
         if (gem) {
           const cd = j.candidates && j.candidates[0];
@@ -570,6 +969,7 @@ async function send() {
           if (!rs && Array.isArray(dl.reasoning_details)) rs = dl.reasoning_details.map(x => x.text || x.summary || '').join('');
           ct = dl.content || '';
         }
+        if (rs || ct) el.classList.remove('wait');
         if (rs) {
           if (!t0) t0 = Date.now();
           thinking += rs;
@@ -579,6 +979,8 @@ async function send() {
         if (ct) {
           if (thinking && secs === null) { secs = Math.round((Date.now() - t0) / 1000); setThink(el, thinking, secs, false); }
           reply += ct; body.innerHTML = fmt(reply);
+          if (!tgen) tgen = Date.now();
+          if (loc && ++ntok % 3 === 0) status('Generating with ' + name + '… ' + ntok + ' tok · ' + (ntok / Math.max(0.1, (Date.now() - tgen) / 1000)).toFixed(1) + ' tok/s');
           if (c === chat) scroll();
         }
       }
@@ -593,12 +995,17 @@ async function send() {
 
   ctrl = null;
   $('send').textContent = 'Send';
+  el.classList.remove('wait');
+  if (loc) loadLocal(); // the model is in RAM now: refresh its state
   if (thinking && secs === null) { secs = Math.round((Date.now() - t0) / 1000); setThink(el, thinking, secs, false); }
   if (reply) {
-    c.messages.push({ role: 'assistant', content: reply, reasoning: thinking || undefined, secs: thinking ? secs : undefined });
-    status(failed ? 'Reply cut short: ' + failed : '', !!failed);
+    if (stats) stats = { promptTokens: stats.promptTokens, completionTokens: stats.completionTokens, contextLimit: stats.contextLimit, tokensPerSec: stats.tokensPerSec, genMs: stats.genMs, loadMs: stats.loadMs, modelName: stats.modelName };
+    c.messages.push({ role: 'assistant', content: reply, reasoning: thinking || undefined, secs: thinking ? secs : undefined, model, stats: stats || undefined });
+    setMeta(el, stats, model);
+    status(failed ? 'Reply cut short: ' + failed : stats ? name + ' · ' + stats.completionTokens + ' tokens in ' + (stats.genMs / 1000).toFixed(2) + ' s (' + stats.tokensPerSec + ' tok/s)' : '', !!failed);
   } else {
     c.messages.pop(); uEl.remove(); el.remove();
+    if (c === chat && !c.messages.length) renderChat();
     if (c === chat) { $('input').value = text; autosize(); }
     status(failed ? 'Error: ' + failed : 'Stopped.', !!failed);
   }
@@ -627,13 +1034,15 @@ function autosize() {
 /* ---------- wiring ---------- */
 $('log').addEventListener('scroll', () => { stick = atBottom(); $('down').hidden = stick; });
 $('down').onclick = () => scroll(true);
-$('msgs').addEventListener('click', e => {
+const codeClick = e => {
   const b = e.target.closest('button[data-act]');
   if (!b) return;
   const code = b.closest('.cbw').querySelector('code').textContent;
   if (b.dataset.act === 'dl') return download(code);
   navigator.clipboard.writeText(code).then(() => { b.textContent = 'Copied'; setTimeout(() => { b.textContent = 'Copy'; }, 1200); }).catch(() => {});
-});
+};
+$('msgs').addEventListener('click', codeClick);
+$('mm').addEventListener('click', codeClick); // code blocks inside model cards
 function download(code) {
   const m = code.match(/<title[^>]*>([^<]{1,80})<\/title>/i);
   const base = m ? m[1].trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') : '';
@@ -657,6 +1066,51 @@ $('fav').onclick = () => {
 };
 $('key').onchange = () => { S.key = $('key').value.trim(); saveSettings(); };
 $('gkey').onchange = () => { S.gkey = $('gkey').value.trim(); saveSettings(); status(S.gkey ? 'Loading Gemini models…' : ''); loadGemini().then(() => { if (S.gkey && $('status').textContent === 'Loading Gemini models…') status(''); }); };
+$('srv').onchange = () => { S.localServerUrl = $('srv').value = $('srv').value.trim().replace(/\/+$/, ''); saveSettings(); loadServer(!!S.localServerUrl); };
+$('srvkey').onchange = () => { S.localServerKey = $('srvkey').value.trim(); saveSettings(); loadServer(!!S.localServerUrl); };
+$('menu').onclick = e => { e.stopPropagation(); document.body.classList.toggle('nav'); };
+document.addEventListener('click', e => { if (document.body.classList.contains('nav') && !e.target.closest('aside')) document.body.classList.remove('nav'); }); // tap outside closes the sidebar on small screens
+$('list').addEventListener('click', e => { if (e.target.closest('.it') && !e.target.closest('button, input')) document.body.classList.remove('nav'); });
+$('lm').onclick = $('bmodel').onclick = () => openModels('inst');
+$('bparams').onclick = () => { showParams = !showParams; localUI(); };
+PF.forEach(([id, k, lo, hi]) => {
+  $(id).onchange = () => {
+    let v = parseFloat($(id).value);
+    if (!isFinite(v)) v = LP0[k];
+    v = Math.min(hi, Math.max(lo, v));
+    S.localParams[k] = $(id).value = k === 'topK' || k === 'maxTokens' ? Math.round(v) : Math.round(v * 100) / 100;
+    saveSettings();
+  };
+});
+$('pf').onchange = () => { S.localParams.promptFormat = $('pf').value; saveSettings(); };
+$('psys').onchange = () => { S.localParams.systemPrompt = $('psys').value.slice(0, 4000); saveSettings(); };
+$('preset').onclick = () => { S.localParams = Object.assign({}, LP0); fillParams(); saveSettings(); };
+$('bram').onclick = async () => {
+  const m = locModels.find(x => x.id === $('model').value);
+  if (!m || ctrl) return;
+  $('bram').disabled = true;
+  status((m.loaded ? 'Unloading ' : 'Loading ') + m.name + '…');
+  try {
+    const j = await call('POST', '/api/local/models/' + m.slug + '/load', { action: m.loaded ? 'unload' : 'load' });
+    status(j.loaded ? 'Loaded ' + m.name + ' into RAM (' + fmtBytes(j.ramBytes) + ') in ' + (j.loadMs / 1000).toFixed(1) + ' s.' : 'Unloaded ' + m.name + ' from RAM.');
+  } catch (e) { status(e.message, true); }
+  $('bram').disabled = false;
+  loadLocal();
+};
+$('mx').onclick = () => $('mm').close();
+$('mm').addEventListener('click', e => { if (e.target === $('mm')) $('mm').close(); }); // click on the backdrop
+document.querySelectorAll('#mm [data-tab]').forEach(b => { b.onclick = () => showTab(b.dataset.tab); });
+$('fzip').onsubmit = e => { e.preventDefault(); const url = $('zurl').value.trim(); if (url) runImport({ source: 'url', url, name: $('zname').value.trim() || undefined }); };
+$('fhf').onsubmit = e => { e.preventDefault(); const repo = $('hrepo').value.trim(); if (repo) runImport({ source: 'huggingface', repo, name: $('hname').value.trim() || undefined }); };
+document.querySelectorAll('#fhf .chip').forEach(b => { b.onclick = () => { $('hrepo').value = b.dataset.repo; $('hname').value = b.dataset.name; }; });
+$('pickzip').onclick = () => $('inzip').click();
+$('pickfiles').onclick = () => $('infiles').click();
+$('inzip').onchange = $('infiles').onchange = e => { setUpload(e.target.files); e.target.value = ''; };
+$('drop').ondragover = e => { e.preventDefault(); $('drop').classList.add('over'); };
+$('drop').ondragleave = () => $('drop').classList.remove('over');
+$('drop').ondrop = e => { e.preventDefault(); $('drop').classList.remove('over'); if (e.dataTransfer.files.length) setUpload(e.dataTransfer.files); };
+$('upgo').onclick = upload;
+addEventListener('resize', localUI); // the message box hint depends on the window width
 $('quit').onclick = async () => {
   if (!confirm('Quit Nanochat? Your chats are saved.')) return;
   try { await api('POST', '/api/quit'); } catch {}
@@ -668,10 +1122,14 @@ $('quit').onclick = async () => {
   ping(); setInterval(ping, 10000);
   try { Object.assign(S, await api('GET', '/api/settings')); } catch {}
   buildThemes(); applyTheme(S.theme);
+  S.localParams = Object.assign({}, LP0, S.localParams); // settings saved by version 1.1 have no local section
+  if (!Array.isArray(S.favorites)) S.favorites = [];
   $('key').value = S.key || ''; $('gkey').value = S.gkey || '';
-  if (!S.key && !S.gkey) $('set').open = true;
+  $('srv').value = S.localServerUrl || ''; $('srvkey').value = S.localServerKey || ''; fillParams();
   renderChat(); refreshList();
-  loading = 2; loadOpenRouter(); loadGemini();
+  loading = 4; await loadLocal(); // local models first: they need no network
+  if (!S.key && !S.gkey && !S.localServerUrl && !locModels.length) $('set').open = true;
+  loadServer(); loadOpenRouter(); loadGemini();
 })();
 </script>
 </body>

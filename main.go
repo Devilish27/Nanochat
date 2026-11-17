@@ -23,10 +23,10 @@ import (
 var page []byte
 
 var (
-	dataDir, chatsDir, port string
-	lastPing                atomic.Int64
-	idRe                    = regexp.MustCompile(`^[A-Za-z0-9_-]{1,64}$`)
-	themeRe                 = regexp.MustCompile(`^[a-z0-9-]{1,24}$`)
+	dataDir, chatsDir, modelsDir, port string
+	lastPing                           atomic.Int64
+	idRe                               = regexp.MustCompile(`^[A-Za-z0-9_-]{1,64}$`)
+	themeRe                            = regexp.MustCompile(`^[a-z0-9-]{1,24}$`)
 )
 
 // themed returns the page with the saved theme already set on <html>, so the
@@ -49,7 +49,9 @@ func main() {
 	exe, _ := os.Executable()
 	dataDir = filepath.Join(filepath.Dir(exe), "data")
 	chatsDir = filepath.Join(dataDir, "chats")
+	modelsDir = filepath.Join(dataDir, "models")
 	os.MkdirAll(chatsDir, 0o755)
+	os.MkdirAll(modelsDir, 0o755)
 
 	// Find a free port, or hand over to an already-running instance.
 	var ln net.Listener
@@ -78,6 +80,8 @@ func main() {
 			}
 		}
 	}()
+
+	cleanStaging() // leftovers of an interrupted model import
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -115,10 +119,15 @@ func main() {
 	})
 	mux.HandleFunc("/api/chats", list)
 	mux.HandleFunc("/api/chats/", one)
+	registerLocal(mux) // local models: see models.go
 
 	go openBrowser("http://127.0.0.1:" + port)
 	http.Serve(ln, guard(mux))
 }
+
+// touch counts as a sign of life: a long download or a reply being generated must not let the idle
+// timer close the program, even if the browser slows the page's own heartbeat down in a background tab.
+func touch() { lastPing.Store(time.Now().Unix()) }
 
 // guard rejects requests from other sites (DNS rebinding / cross-origin).
 func guard(h http.Handler) http.Handler {
